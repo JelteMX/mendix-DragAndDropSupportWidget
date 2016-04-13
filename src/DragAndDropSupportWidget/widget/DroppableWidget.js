@@ -18,23 +18,16 @@
 */
 
 // Required module list. Remove unnecessary modules, you can always get them back from the boilerplate.
-require({
-    packages: [
-        { name: 'jquery', location: '../../widgets/DragAndDropSupportWidget/lib', main: 'jquery-1.10.2.min' },
-        { name: 'jqueryui', location: '../../widgets/DragAndDropSupportWidget/lib', main: 'jquery-ui-1.10.4.custom.min' },
-        { name: 'touchpunch', location: '../../widgets/DragAndDropSupportWidget/lib', main: 'jquery.ui.touch-punch.min' }
-    ]
-}, [
-    'dojo/_base/declare', 'mxui/widget/_WidgetBase', 
+require([
+    'dojo/_base/declare', 'mxui/widget/_WidgetBase',
     'mxui/dom', 'dojo/_base/lang',
-    'jquery', 'jqueryui', 'touchpunch'
+    'DragAndDropSupportWidget/lib/jquery.ui.touch-punch'
 ], function (declare, _WidgetBase, dom, lang, $) {
     'use strict';
-    
+
     // Declare widget's prototype.
     return declare('DragAndDropSupportWidget.widget.DroppableWidget', [ _WidgetBase ], {
 
-        // Parameters configured in the Modeler.
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
         _handle: null,
@@ -42,20 +35,13 @@ require({
         _dropData: null,
         _dropEntityItem: null,
 
-        // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
-        constructor: function () {
-        },
-
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function () {
-//            console.log(this.id + '.postCreate');
-            
 //            this.domNode.appendChild(dom.create('span', { 'class': 'DroppableWidget-message' }, this.messageString));
 
             this._setupEvents();
         },
 
-        // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function (obj, callback) {
 //            console.log(this.id + '.update');
 
@@ -64,16 +50,6 @@ require({
             this._updateRendering();
 
             callback();
-        },
-
-        // mxui.widget._WidgetBase.enable is called when the widget should enable editing. Implement to enable editing if widget is input widget.
-        enable: function () {
-
-        },
-
-        // mxui.widget._WidgetBase.enable is called when the widget should disable editing. Implement to disable editing if widget is input widget.
-        disable: function () {
-
         },
 
         // mxui.widget._WidgetBase.resize is called when the page's layout is recalculated. Implement to do sizing calculations. Prefer using CSS instead.
@@ -90,7 +66,7 @@ require({
             var args = {},
                 node,
                 thisObj = this;
-            
+
             if (this.acceptSelector) {
                 args.accept = this.acceptSelector;
             }
@@ -105,16 +81,16 @@ require({
                 node = $(this.domNode.parentElement);
             }
             node.addClass(this.dropTargetClass).droppable(args);
-         
+
         },
-        
+
         _drop: function (event, ui) {
             var droppedObjectType,
                 droppedObjectGuid,
                 index;
-            
+
             this._dropData = ui;
-                        
+
             droppedObjectType = ui.draggable.attr("data-object-type");
             droppedObjectGuid = ui.draggable.attr("data-object-guid");
             for (index = 0; index < this.dropEntityList.length; index++) {
@@ -165,7 +141,7 @@ require({
         onDropMendixObjectCommitted : function () {
 
             // console.log("onDropMendixObjectCommitted");
-            
+
             mx.data.action({
                 params       : {
                     applyto     : "selection",
@@ -191,7 +167,7 @@ require({
         onDropMicroflowCallback : function () {
             this._moveDraggedNodeBack();
 
-        },       
+        },
 
         /**
          * Called after creation of onDropEntity failed
@@ -228,8 +204,8 @@ require({
             console.dir(err);
             console.log("Call to microflow " + this.onDropMicroflow + " ended with an error");
 
-        },       
-        
+        },
+
         _moveDraggedNodeBack: function () {
             if (this._dropData.draggable.draggable("option", "helper") === "original") {
                 // When the original item is dragged, it must be returned to its original position.
